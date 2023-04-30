@@ -1,5 +1,6 @@
 #include <cmath>
 #include <cstdlib>
+#include <cstring>
 #include <stdexcept>
 
 #include "noise1d.hpp"
@@ -21,37 +22,50 @@ Noise1D::Noise1D(std::size_t seed, std::size_t x) : Noise1D::Noise1D(seed, x, 10
 Noise1D::Noise1D(std::size_t seed, std::size_t x, double scale, int octaves, double lacunarity, double persistance)
     : mSeed(seed), mX(x)
 {
-  // generate gradients randomly
-  std::size_t gradSize = mX / scale + 1;
+  // allocate memory for gradients
+  int gradSize = mX * std::pow(lacunarity, octaves - 1) / scale + 1;
   double *grad = new double[gradSize];
 
+  // generate gradients randomly
   std::srand(mSeed);
-  for (std::size_t i = 0; i < gradSize; i++)
+  for (int i = 0; i < gradSize; i++)
     grad[i] = std::cos(std::rand());
 
-  // calculate the value of all sample points
+  // allocate memory for data and initialize
   mData = new double[mX];
-  for (std::size_t i = 0; i < mX; i++)
+  std::memset(mData, 0, mX * sizeof(double));
+
+  // calculate the value of all sample points
+  for (int i = 0; i < (int)mX; i++)
   {
-    // sample point coordinates
-    double samplePoint = (double)i / scale;
-    int sample0 = (int)samplePoint;
-    int sample1 = (int)samplePoint + 1;
+    for (int j = 0; j < octaves; j++)
+    {
+      // sample point coordinates
+      // multiply by lacunarity value
+      double samplePoint = ((double)i / scale) * std::pow(lacunarity, j);
 
-    // sample point gradients
-    double grad0 = grad[sample0];
-    double grad1 = grad[sample1];
+      // grid points of sample point
+      int grid0 = (int)samplePoint;
+      int grid1 = (int)samplePoint + 1;
 
-    // interpolation point
-    double lerpPoint = samplePoint - sample0;
+      // gradients of grid point s
+      double grad0 = grad[grid0];
+      double grad1 = grad[grid1];
 
-    // influence values : dot(gradient * grid_point_to_sample_point_vector)
-    double influence0 = grad0 * lerpPoint;
-    double influence1 = grad1 * (lerpPoint - 1);
+      // interpolation point
+      double lerpPoint = samplePoint - grid0;
 
-    mData[i] = lerp(influence0, influence1, fade(lerpPoint));
+      // influence values : dot(gradient * grid_point_to_sample_point_vector)
+      double influence0 = grad0 * lerpPoint;
+      double influence1 = grad1 * (lerpPoint - 1);
+
+      // interpolate the influence values with fading function
+      // multiply by persistence value
+      mData[i] += lerp(influence0, influence1, fade(lerpPoint)) * std::pow(persistance, j);
+    }
   }
 
+  // deallocate the memory for gradients
   delete[] grad;
 }
 
