@@ -1,4 +1,4 @@
-.PHONY: all clean
+.PHONY: all test clean
 
 CC = g++
 CFLAGS = -O3 -Wall -shared -std=c++11 -fPIC
@@ -9,7 +9,8 @@ TARGET = noise.so
 all: $(TARGET)
 
 test: $(TARGET)
-	python3 -m pytest -v
+	cp $(TARGET) ./test/$(TARGET)
+	python3 -m pytest test/ -v
 
 clean:
 	rm -rf *.o *.out *.so __pycache__/ .pytest_cache/

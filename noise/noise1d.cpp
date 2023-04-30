@@ -15,7 +15,7 @@ double Noise1D::fade(double t)
   return t * t * t * ((6 * t - 15) * t + 10);
 }
 
-Noise1D::Noise1D(std::size_t seed, std::size_t x) : Noise1D::Noise1D(seed, x, 10.0, 1, 0.5, 2.0)
+Noise1D::Noise1D(std::size_t seed, std::size_t x) : Noise1D::Noise1D(seed, x, 20.0, 1, 0.5, 2.0)
 {
 }
 
