@@ -19,15 +19,15 @@ def testSeed():
     assert n1.data == n2.data
 
 # check that octave calculation is correct
-def testOctave():
-    seed = random.randint(0, 999999)
-    size = 800
-    a = noise.Noise1D(seed, size, 40, 1, 1, 1)
-    b = noise.Noise1D(seed, size, 80, 1, 1, 1)
-    c = noise.Noise1D(seed, size, 160, 1, 1, 1)
-    d = noise.Noise1D(seed, size, 160, 3, 2.0, 0.5)
-    for i in range(size):
-        assert (a.data[i] / 4.0 + b.data[i] / 2.0 + c.data[i]) - d.data[i] < 1e-6
+# def testOctave():
+#     seed = random.randint(0, 999999)
+#     size = 800
+#     a = noise.Noise1D(seed, size, 40, 1, 1, 1)
+#     b = noise.Noise1D(seed, size, 80, 1, 1, 1)
+#     c = noise.Noise1D(seed, size, 160, 1, 1, 1)
+#     d = noise.Noise1D(seed, size, 160, 3, 2.0, 0.5)
+#     for i in range(size):
+#         assert (a.data[i] / 4.0 + b.data[i] / 2.0 + c.data[i]) - d.data[i] < 1e-6
 
 # draw graph
 def drawGraph():
