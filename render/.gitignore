@@ -1,0 +1,8 @@
+/.vscode
+*.out
+*.so
+__pycache__/
+.pytest_cache/
+
+heightmap.png
+colormap.png
