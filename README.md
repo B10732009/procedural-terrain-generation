@@ -40,7 +40,40 @@ Anyone who wants to simulate random terrain or uses Perlin Noise for application
 
 ## API Description ##
 
-The API will have both C++ and Python version.
+The API will have both `C++` and `Python` version.
+
+For `Python` :
+
+```py
+import noise
+
+# create class object
+n = noise.Noise1D(seed, size) # 1D
+n = noise.Noise2D(seed, size) # 1D
+
+# create class object with optional parameters
+n = Noise1D(seed, x, scale, octaves, lacunarity, persistance) # 1D
+n = Noise2D(seed, x, scale, octaves, lacunarity, persistance) # 2D
+
+# get noise at specific position
+n[i] # 1D
+n[i, j] # 2D
+
+# get seed
+n.seed
+
+# get size
+n.x # 1D, 2D
+n.y # 2D
+
+# get whole noise data
+n.data
+```
+
+For `C++`
+```cpp
+
+```
 
 <!-- ```cpp
 // C++ API
