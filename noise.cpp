@@ -23,6 +23,7 @@ PYBIND11_MODULE(noise, m)
       .def_property_readonly("seed", [](Noise2D const &n) { return n.seed(); })
       .def_property_readonly("x", [](Noise2D const &n) { return n.x(); })
       .def_property_readonly("y", [](Noise2D const &n) { return n.y(); })
-      .def_property_readonly("data", [](Noise2D const &n) { return std::vector<double>(n.data(), n.data() + n.x()); })
+      .def_property_readonly("data",
+                             [](Noise2D const &n) { return std::vector<double>(n.data(), n.data() + n.x() * n.y()); })
       .def("__getitem__", [](Noise2D const &n, std::vector<std::size_t> idx) { return n(idx[0], idx[1]); });
 }
