@@ -24,7 +24,8 @@ Noise2D::Noise2D(std::size_t seed, std::size_t x, std::size_t y, double scale, i
     : mSeed(seed), mX(x), mY(y)
 {
   // allocate memory for gradients
-  int gradSize = mX * mY * std::pow(lacunarity, octaves - 1) / scale + 1;
+  // int gradSize = mX * mY * std::pow(lacunarity, octaves - 1) / scale + 1;
+  int gradSize = ((mX / (int)scale + 1) * (mY / (int)scale + 1)) * std::pow(lacunarity, octaves - 1);
   double *grad = new double[gradSize * 2];
 
   // generate gradients randomly
@@ -59,16 +60,17 @@ Noise2D::Noise2D(std::size_t seed, std::size_t x, std::size_t y, double scale, i
         int gridY1 = (int)samplePointY + 1;
 
         // gradients of grid point s
+        int s = 1;
         // x
-        double gradX00 = grad[(gridX0 * mY + gridY0) * 2];
-        double gradX01 = grad[(gridX0 * mY + gridY1) * 2];
-        double gradX10 = grad[(gridX1 * mY + gridY0) * 2];
-        double gradX11 = grad[(gridX1 * mY + gridY1) * 2];
+        double gradX00 = grad[((gridX0 / s) * (mY / (int)scale) + (gridY0 / s)) * 2];
+        double gradX01 = grad[((gridX0 / s) * (mY / (int)scale) + (gridY1 / s)) * 2];
+        double gradX10 = grad[((gridX1 / s) * (mY / (int)scale) + (gridY0 / s)) * 2];
+        double gradX11 = grad[((gridX1 / s) * (mY / (int)scale) + (gridY1 / s)) * 2];
         // y
-        double gradY00 = grad[(gridX0 * mY + gridY0) * 2 + 1];
-        double gradY01 = grad[(gridX0 * mY + gridY1) * 2 + 1];
-        double gradY10 = grad[(gridX1 * mY + gridY0) * 2 + 1];
-        double gradY11 = grad[(gridX1 * mY + gridY1) * 2 + 1];
+        double gradY00 = grad[((gridX0 / s) * (mY / (int)scale) + (gridY0 / s)) * 2 + 1];
+        double gradY01 = grad[((gridX0 / s) * (mY / (int)scale) + (gridY1 / s)) * 2 + 1];
+        double gradY10 = grad[((gridX1 / s) * (mY / (int)scale) + (gridY0 / s)) * 2 + 1];
+        double gradY11 = grad[((gridX1 / s) * (mY / (int)scale) + (gridY1 / s)) * 2 + 1];
 
         // interpolation point
         double lerpPointX = samplePointX - gridX0;
