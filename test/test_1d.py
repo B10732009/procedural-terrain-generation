@@ -38,11 +38,11 @@ def drawGraph():
     c = noise.Noise1D(seed, size, 160, 1, 1, 1)
     d = noise.Noise1D(seed, size, 160, 3, 2.0, 0.5)
 
-    x=[i for i in range(size)]
-    y1=[a[i] for i in range(size)]
-    y2=[b[i] for i in range(size)]
-    y3=[c[i] for i in range(size)]
-    y4=[d[i] for i in range(size)]
+    x = [i for i in range(size)]
+    y1 = [a[i] for i in range(size)]
+    y2 = [b[i] for i in range(size)]
+    y3 = [c[i] for i in range(size)]
+    y4 = [d[i] for i in range(size)]
 
     plt.figure(figsize=(15, 6))
 

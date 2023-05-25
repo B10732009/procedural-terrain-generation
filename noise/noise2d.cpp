@@ -14,8 +14,7 @@ double Noise2D::fade(double t)
   return t * t * t * ((6 * t - 15) * t + 10);
 }
 
-Noise2D::Noise2D(std::size_t _seed, std::size_t _xsz, std::size_t _ysz) // simplified version constructor
-    : Noise2D::Noise2D(_seed, _xsz, _ysz, 20.0, 1, 0.5, 2.0)
+Noise2D::Noise2D(std::size_t _seed, std::size_t _xsz, std::size_t _ysz) : Noise2D::Noise2D(_seed, _xsz, _ysz, 20.0, 1, 0.5, 2.0)
 {
 }
 
@@ -26,8 +25,7 @@ Noise2D::Noise2D(std::size_t _seed,    // seed
                  std::size_t _octaves, // octaves level
                  double _lacunarity,   // lacunarity
                  double _persistance)  // persistance
-    : mSeed(_seed), mXsz(_xsz), mYsz(_ysz), mScale(_scale), mOctaves(_octaves), mLacunarity(_lacunarity),
-      mPersistance(_persistance)
+    : mSeed(_seed), mXsz(_xsz), mYsz(_ysz), mScale(_scale), mOctaves(_octaves), mLacunarity(_lacunarity), mPersistance(_persistance)
 {
   // allocate memory for gradients
   std::size_t gridNum = (mXsz / mScale + 1) * (mYsz / mScale + 1) * std::pow(mLacunarity, mOctaves - 1);
@@ -86,8 +84,7 @@ Noise2D::Noise2D(std::size_t _seed,    // seed
         double influence11 = gradX11 * (lerpPointX - 1) + gradY11 * (lerpPointY - 1);
 
         // interpolate the influence values with fading function
-        double lerpValue = lerp(lerp(influence00, influence01, fade(lerpPointY)),
-                                lerp(influence10, influence11, fade(lerpPointY)), fade(lerpPointX));
+        double lerpValue = lerp(lerp(influence00, influence01, fade(lerpPointY)), lerp(influence10, influence11, fade(lerpPointY)), fade(lerpPointX));
 
         // multiply by persistence value
         mData[i * mYsz + j] += lerpValue * std::pow(mPersistance, octi);
