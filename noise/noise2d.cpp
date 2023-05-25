@@ -30,12 +30,8 @@ Noise2D::Noise2D(std::size_t _seed,    // seed
       mPersistance(_persistance)
 {
   // allocate memory for gradients
-  // int gradSize = mX * mY * std::pow(lacunarity, octaves - 1) / scale + 1;
   std::size_t gridNum = (mXsz / mScale + 1) * (mYsz / mScale + 1) * std::pow(mLacunarity, mOctaves - 1);
   std::vector<double> grad(gridNum * 2);
-
-  // int gradSize = ((mX / (int)scale + 1) * (mY / (int)scale + 1)) * std::pow(lacunarity, octaves - 1);
-  // double *grad = new double[gradSize * 2];
 
   // generate gradients randomly
   std::srand(mSeed);
@@ -47,8 +43,6 @@ Noise2D::Noise2D(std::size_t _seed,    // seed
   }
 
   // allocate memory for data and initialize
-  // mData = new double[mX * mY];
-  // std::memset(mData, 0, mX * mY * sizeof(double));
   mData = std::vector<double>(mXsz * mYsz, 0.0);
 
   // calculate the value of all sample points
@@ -100,23 +94,14 @@ Noise2D::Noise2D(std::size_t _seed,    // seed
       }
     }
   }
-
-  // // deallocate the memory for gradients
-  // delete[] grad;
 }
 
 Noise2D::~Noise2D()
 {
-  // if (mData)
-  //   delete[] mData;
 }
 
 double Noise2D::operator()(std::size_t idx1, std::size_t idx2) const
 {
-  // if (t1 < 0 || t1 >= mX || t2 < 0 || t2 >= mY)
-  //   throw std::out_of_range("sample point out of range.");
-  // return mData[t1 * mY + t2];
-
   return mData.at(idx1 * mYsz + idx2);
 }
 
