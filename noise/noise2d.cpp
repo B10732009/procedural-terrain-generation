@@ -1,7 +1,6 @@
 #include <cmath>
 #include <cstdlib>
-#include <cstring>
-#include <stdexcept>
+#include <vector>
 
 #include "noise2d.hpp"
 
@@ -15,22 +14,32 @@ double Noise2D::fade(double t)
   return t * t * t * ((6 * t - 15) * t + 10);
 }
 
-Noise2D::Noise2D(std::size_t seed, std::size_t x, std::size_t y) : Noise2D::Noise2D(seed, x, y, 20.0, 1, 0.5, 2.0)
+Noise2D::Noise2D(std::size_t _seed, std::size_t _xsz, std::size_t _ysz) // simplified version constructor
+    : Noise2D::Noise2D(_seed, _xsz, _ysz, 20.0, 1, 0.5, 2.0)
 {
 }
 
-Noise2D::Noise2D(std::size_t seed, std::size_t x, std::size_t y, double scale, int octaves, double lacunarity,
-                 double persistance)
-    : mSeed(seed), mX(x), mY(y)
+Noise2D::Noise2D(std::size_t _seed,    // seed
+                 std::size_t _xsz,     // x-direction size
+                 std::size_t _ysz,     // y-direction size
+                 std::size_t _scale,   // scale
+                 std::size_t _octaves, // octaves level
+                 double _lacunarity,   // lacunarity
+                 double _persistance)  // persistance
+    : mSeed(_seed), mXsz(_xsz), mYsz(_ysz), mScale(_scale), mOctaves(_octaves), mLacunarity(_lacunarity),
+      mPersistance(_persistance)
 {
   // allocate memory for gradients
   // int gradSize = mX * mY * std::pow(lacunarity, octaves - 1) / scale + 1;
-  int gradSize = ((mX / (int)scale + 1) * (mY / (int)scale + 1)) * std::pow(lacunarity, octaves - 1);
-  double *grad = new double[gradSize * 2];
+  std::size_t gridNum = (mXsz / mScale + 1) * (mYsz / mScale + 1) * std::pow(mLacunarity, mOctaves - 1);
+  std::vector<double> grad(gridNum * 2);
+
+  // int gradSize = ((mX / (int)scale + 1) * (mY / (int)scale + 1)) * std::pow(lacunarity, octaves - 1);
+  // double *grad = new double[gradSize * 2];
 
   // generate gradients randomly
   std::srand(mSeed);
-  for (int i = 0; i < gradSize * 2; i += 2)
+  for (std::size_t i = 0; i < grad.size(); i += 2)
   {
     double r = std::rand();
     grad[i] = std::cos(r);
@@ -38,20 +47,21 @@ Noise2D::Noise2D(std::size_t seed, std::size_t x, std::size_t y, double scale, i
   }
 
   // allocate memory for data and initialize
-  mData = new double[mX * mY];
-  std::memset(mData, 0, mX * mY * sizeof(double));
+  // mData = new double[mX * mY];
+  // std::memset(mData, 0, mX * mY * sizeof(double));
+  mData = std::vector<double>(mXsz * mYsz, 0.0);
 
   // calculate the value of all sample points
-  for (int i = 0; i < (int)mX; i++)
+  for (std::size_t i = 0; i < mXsz; i++)
   {
-    for (int j = 0; j < (int)mY; j++)
+    for (std::size_t j = 0; j < mYsz; j++)
     {
-      for (int k = 0; k < octaves; k++)
+      for (std::size_t octi = 0; octi < mOctaves; octi++)
       {
         // sample point coordinates
         // multiply by lacunarity value
-        double samplePointX = ((double)i / scale) * std::pow(lacunarity, k);
-        double samplePointY = ((double)j / scale) * std::pow(lacunarity, k);
+        double samplePointX = ((double)i / mScale) * std::pow(mLacunarity, octi);
+        double samplePointY = ((double)j / mScale) * std::pow(mLacunarity, octi);
 
         // grid points of sample point
         int gridX0 = (int)samplePointX;
@@ -60,17 +70,16 @@ Noise2D::Noise2D(std::size_t seed, std::size_t x, std::size_t y, double scale, i
         int gridY1 = (int)samplePointY + 1;
 
         // gradients of grid point s
-        int s = 1;
         // x
-        double gradX00 = grad[((gridX0 / s) * (mY / (int)scale) + (gridY0 / s)) * 2];
-        double gradX01 = grad[((gridX0 / s) * (mY / (int)scale) + (gridY1 / s)) * 2];
-        double gradX10 = grad[((gridX1 / s) * (mY / (int)scale) + (gridY0 / s)) * 2];
-        double gradX11 = grad[((gridX1 / s) * (mY / (int)scale) + (gridY1 / s)) * 2];
+        double gradX00 = grad[(gridX0 * (mYsz / mScale) + gridY0) * 2];
+        double gradX01 = grad[(gridX0 * (mYsz / mScale) + gridY1) * 2];
+        double gradX10 = grad[(gridX1 * (mYsz / mScale) + gridY0) * 2];
+        double gradX11 = grad[(gridX1 * (mYsz / mScale) + gridY1) * 2];
         // y
-        double gradY00 = grad[((gridX0 / s) * (mY / (int)scale) + (gridY0 / s)) * 2 + 1];
-        double gradY01 = grad[((gridX0 / s) * (mY / (int)scale) + (gridY1 / s)) * 2 + 1];
-        double gradY10 = grad[((gridX1 / s) * (mY / (int)scale) + (gridY0 / s)) * 2 + 1];
-        double gradY11 = grad[((gridX1 / s) * (mY / (int)scale) + (gridY1 / s)) * 2 + 1];
+        double gradY00 = grad[(gridX0 * (mYsz / mScale) + gridY0) * 2 + 1];
+        double gradY01 = grad[(gridX0 * (mYsz / mScale) + gridY1) * 2 + 1];
+        double gradY10 = grad[(gridX1 * (mYsz / mScale) + gridY0) * 2 + 1];
+        double gradY11 = grad[(gridX1 * (mYsz / mScale) + gridY1) * 2 + 1];
 
         // interpolation point
         double lerpPointX = samplePointX - gridX0;
@@ -87,26 +96,28 @@ Noise2D::Noise2D(std::size_t seed, std::size_t x, std::size_t y, double scale, i
                                 lerp(influence10, influence11, fade(lerpPointY)), fade(lerpPointX));
 
         // multiply by persistence value
-        mData[i * mY + j] += lerpValue * std::pow(persistance, k);
+        mData[i * mYsz + j] += lerpValue * std::pow(mPersistance, octi);
       }
     }
   }
 
-  // deallocate the memory for gradients
-  delete[] grad;
+  // // deallocate the memory for gradients
+  // delete[] grad;
 }
 
 Noise2D::~Noise2D()
 {
-  if (mData)
-    delete[] mData;
+  // if (mData)
+  //   delete[] mData;
 }
 
-double Noise2D::operator()(std::size_t t1, std::size_t t2) const
+double Noise2D::operator()(std::size_t idx1, std::size_t idx2) const
 {
-  if (t1 < 0 || t1 >= mX || t2 < 0 || t2 >= mY)
-    throw std::out_of_range("sample point out of range.");
-  return mData[t1 * mY + t2];
+  // if (t1 < 0 || t1 >= mX || t2 < 0 || t2 >= mY)
+  //   throw std::out_of_range("sample point out of range.");
+  // return mData[t1 * mY + t2];
+
+  return mData.at(idx1 * mYsz + idx2);
 }
 
 std::size_t Noise2D::seed() const
@@ -114,17 +125,37 @@ std::size_t Noise2D::seed() const
   return mSeed;
 }
 
-std::size_t Noise2D::x() const
+std::size_t Noise2D::xsz() const
 {
-  return mX;
+  return mXsz;
 }
 
-std::size_t Noise2D::y() const
+std::size_t Noise2D::ysz() const
 {
-  return mY;
+  return mYsz;
 }
 
-const double *Noise2D::data() const
+std::size_t Noise2D::scale() const
 {
-  return (const double *)mData;
+  return mScale;
+}
+
+std::size_t Noise2D::octaves() const
+{
+  return mOctaves;
+}
+
+double Noise2D::lacunarity() const
+{
+  return mLacunarity;
+}
+
+double Noise2D::persistance() const
+{
+  return mPersistance;
+}
+
+std::vector<double> Noise2D::data() const
+{
+  return mData;
 }
