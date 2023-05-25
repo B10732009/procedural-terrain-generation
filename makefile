@@ -3,7 +3,7 @@
 CC = g++
 CFLAGS = -O3 -Wall -shared -std=c++11 -fPIC
 
-SRC = noise.cpp noise/noise1d.cpp noise/noise2d.cpp
+SRC = noise.cpp noise/noise1d.cpp noise/noise2d.cpp noise/noise3d.cpp
 TARGET = noise.so
 RTARGET = render/noise.so
 TTARGET = test/noise.so
@@ -22,6 +22,10 @@ graph1: $(TTARGET)
 # show 2D noise testing graph
 graph2: $(TTARGET)
 	python3 test/test_2d.py
+
+# show 2D noise testing graph
+graph3: $(TTARGET)
+	python3 test/test_3d.py
 
 # render a terrain
 render: $(RTARGET)
