@@ -1,38 +1,28 @@
 #pragma once
 
 #include <cstddef>
+#include <vector>
 
 class Noise3D
 {
 private:
-  std::size_t mSeed;
-  std::size_t mXsz;
-  std::size_t mYsz;
-  std::size_t mZsz;
-  std::size_t mScale;
-  std::size_t mOctaves;
-  double mLacunarity;
-  double mPersistance;
-  std::vector<double> mData;
+  std::size_t mSeed;         // seed
+  std::size_t mXsz;          // x-direction size
+  std::size_t mYsz;          // y-direction size
+  std::size_t mZsz;          // z-direction size
+  std::size_t mScale;        // scale
+  std::size_t mOctaves;      // octaves level
+  double mLacunarity;        // lacunarity
+  double mPersistance;       // persistance
+  std::vector<double> mData; // noise values
 
   static double lerp(double a, double b, double t);
   static double fade(double t);
 
-  // int loc(int x, int y, int z);
-  // int sloc(int x, int y, int z, int scale);
-
 public:
   Noise3D() = delete;
   Noise3D(std::size_t _seed, std::size_t _xsz, std::size_t _ysz, std::size_t _zsz);
-  Noise3D(std::size_t _seed,    // seed
-          std::size_t _xsz,     // x-direction size
-          std::size_t _ysz,     // y-direction size
-          std::size_t _zsz,     // z-direction size
-          std::size_t _scale,   // scale
-          std::size_t _octaves, // octaves level
-          double _lacunarity,   // lacunarity
-          double _persistance   // persistance
-  );
+  Noise3D(std::size_t _seed, std::size_t _xsz, std::size_t _ysz, std::size_t _zsz, std::size_t _scale, std::size_t _octaves, double _lacunarity, double _persistance);
   ~Noise3D();
 
   double operator()(std::size_t idx1, std::size_t idx2, std::size_t idx3) const;

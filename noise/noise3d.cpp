@@ -1,10 +1,5 @@
 #include <cmath>
 #include <cstdlib>
-#include <cstring>
-#include <iostream>
-#include <stdexcept>
-
-#include <array>
 #include <vector>
 
 #include "noise3d.hpp"
@@ -19,18 +14,12 @@ double Noise3D::fade(double t)
   return t * t * t * ((6 * t - 15) * t + 10);
 }
 
-Noise3D::Noise3D(std::size_t _seed, std::size_t _xsz, std::size_t _ysz, std::size_t _zsz) : Noise3D::Noise3D(_seed, _xsz, _ysz, _zsz, 20.0, 1, 0.5, 2.0)
+Noise3D::Noise3D(std::size_t _seed, std::size_t _xsz, std::size_t _ysz, std::size_t _zsz) //
+    : Noise3D::Noise3D(_seed, _xsz, _ysz, _zsz, 20, 1, 1, 1)
 {
 }
 
-Noise3D::Noise3D(std::size_t _seed,    // seed
-                 std::size_t _xsz,     // x-direction size
-                 std::size_t _ysz,     // y-direction size
-                 std::size_t _zsz,     // z-direction size
-                 std::size_t _scale,   // scale
-                 std::size_t _octaves, // octaves level
-                 double _lacunarity,   // lacunarity
-                 double _persistance)  // persistance
+Noise3D::Noise3D(std::size_t _seed, std::size_t _xsz, std::size_t _ysz, std::size_t _zsz, std::size_t _scale, std::size_t _octaves, double _lacunarity, double _persistance) //
     : mSeed(_seed), mXsz(_xsz), mYsz(_ysz), mZsz(_zsz), mScale(_scale), mOctaves(_octaves), mLacunarity(_lacunarity), mPersistance(_persistance)
 {
   // allocate memory for gradients
@@ -56,7 +45,7 @@ Noise3D::Noise3D(std::size_t _seed,    // seed
   {
     for (std::size_t j = 0; j < mYsz; j++)
     {
-      for (std::size_t k = 0; k < mYsz; k++)
+      for (std::size_t k = 0; k < mZsz; k++)
       {
         for (std::size_t octi = 0; octi < mOctaves; octi++)
         {

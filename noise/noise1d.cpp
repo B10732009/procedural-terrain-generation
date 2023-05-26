@@ -14,16 +14,12 @@ double Noise1D::fade(double t)
   return t * t * t * ((6 * t - 15) * t + 10);
 }
 
-Noise1D::Noise1D(std::size_t _seed, std::size_t _xsz) : Noise1D::Noise1D(_seed, _xsz, 20.0, 1, 0.5, 2.0)
+Noise1D::Noise1D(std::size_t _seed, std::size_t _xsz) //
+    : Noise1D::Noise1D(_seed, _xsz, 20, 1, 1, 1)
 {
 }
 
-Noise1D::Noise1D(std::size_t _seed,    // seed
-                 std::size_t _xsz,     // x-direction size
-                 std::size_t _scale,   // scale
-                 std::size_t _octaves, // octaves level
-                 double _lacunarity,   // lacunarity
-                 double _persistance)  // persistance
+Noise1D::Noise1D(std::size_t _seed, std::size_t _xsz, std::size_t _scale, std::size_t _octaves, double _lacunarity, double _persistance) //
     : mSeed(_seed), mXsz(_xsz), mScale(_scale), mOctaves(_octaves), mLacunarity(_lacunarity), mPersistance(_persistance)
 {
   // allocate memory for gradients
