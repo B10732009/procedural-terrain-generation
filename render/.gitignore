@@ -1,6 +1,7 @@
 /.vscode
-*.out
+*.o
 *.so
+*.gif
 __pycache__/
 .pytest_cache/
 

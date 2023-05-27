@@ -5,9 +5,9 @@
 #include <pybind11/stl.h>
 namespace py = pybind11;
 
-#include "noise/noise1d.hpp"
-#include "noise/noise2d.hpp"
-#include "noise/noise3d.hpp"
+#include "noise1d.hpp"
+#include "noise2d.hpp"
+#include "noise3d.hpp"
 
 PYBIND11_MODULE(noise, m)
 {
