@@ -1,6 +1,6 @@
 # Procedural Terrain Generation #
 
-Procedurally generate random terrain with [Perlin Noise](https://en.wikipedia.org/wiki/Perlin_noise).
+Procedurally generate random terrain with **Perlin Noise**.
 
 ## Basic Information ##
 
@@ -18,7 +18,7 @@ Compared with just some random values, Perlin Noise can generate values very smo
 
 The graph below shows the difference between normal random values and perlin noise.
 
-<p style="text-align: center;">
+<p align="center">
     <img src="img/compare.png" alt="compare">
 </p>
 
@@ -34,72 +34,120 @@ Anyone who wants to simulate random terrain or uses Perlin Noise for application
 - Use `Pybind11` to wrap C++ functions for Python.
 - Use `Python` to render the terrain with these APIs (with [Ursina](https://www.ursinaengine.org/)).
 
-<p style="text-align: center;">
-    <img src="img/system_architecture.png" alt="system_architecture">
+<p align="center">
+    <img src="img/full_system_architecture.png" alt="full_system_architecture">
 </p>
 
 ## API Description ##
 
 The API will have both `C++` and `Python` version.
 
-For `Python` :
-
+For `Python` users :
 ```py
 import noise
 
 # create class object
-n = noise.Noise1D(seed, size) # 1D
-n = noise.Noise2D(seed, size) # 1D
+n = noise.Noise1D(seed, x_size)
+n = noise.Noise2D(seed, x_size, y_size)
+n = noise.Noise3D(seed, x_size, y_size, z_size)
 
 # create class object with optional parameters
-n = Noise1D(seed, x, scale, octaves, lacunarity, persistance) # 1D
-n = Noise2D(seed, x, scale, octaves, lacunarity, persistance) # 2D
+n = Noise1D(seed, x_size, scale, octaves, lacunarity, persistance)
+n = Noise2D(seed, x_size, y_size, scale, octaves, lacunarity, persistance)
+n = Noise2D(seed, x_size, y_size, z_size, scale, octaves, lacunarity, persistance)
 
 # get noise at specific position
-n[i] # 1D
-n[i, j] # 2D
+n[i]        # 1D
+n[i, j]     # 2D
+n[i, j, k]  # 3D
 
-# get seed
+# get other attributes
 n.seed
-
-# get size
-n.x # 1D, 2D
-n.y # 2D
-
-# get whole noise data
-n.data
+n.xsz
+n.ysz           # (only for 2D & 3D)
+n.zsz           # (only for 3D)
+n.scale
+n.octaves
+n.lacunarity
+n.persistance
+n.data          # get noise list
 ```
 
-For `C++`
+For `C++` users :
 ```cpp
+#include "noise1d.hpp"
+#include "noise2d.hpp"
+#include "noise3d.hpp"
 
+// create class object
+Noise1D n(std::size_t _seed, std::size_t _xsz);
+Noise2D n(std::size_t _seed, std::size_t _xsz, std::size_t _ysz);
+Noise3D n(std::size_t _seed, std::size_t _xsz, std::size_t _ysz, std::size_t _zsz);
+
+// create class object with optional parameters
+Noise1D n(std::size_t _seed, std::size_t _xsz, 
+        std::size_t _scale, std::size_t _octaves, double _lacunarity, double _persistance);
+Noise2D n(std::size_t _seed, std::size_t _xsz, std::size_t _ysz, 
+        std::size_t _scale, std::size_t _octaves, double _lacunarity, double _persistance);
+Noise3D n(std::size_t _seed, std::size_t _xsz, std::size_t _ysz, std::size_t _zsz, 
+        std::size_t _scale, std::size_t _octaves, double _lacunarity, double _persistance);
+
+// get noise at specific position
+n(std::size_t idx1);                                        // 1D
+n(std::size_t idx1, std::size_t idx2);                      // 2D
+n(std::size_t idx1, std::size_t idx2, std::size_t idx3);    // 3D
+
+// get other attributes
+std::size_t seed();
+std::size_t xsz();
+std::size_t ysz();          // (only for 2D & 3D)
+std::size_t zsz();          // (only for 3D)
+std::size_t scale();
+std::size_t octaves();
+double lacunarity();
+double persistance();
+std::vector<double> data(); // get noise list
 ```
 
-<!-- ```cpp
-// C++ API
-// get the value of a specific coordinate
-double getNoise1D(int seed=0, int octaves=1, double lacunarity=2.0, double persistance=0.5, double x);
-double getNoise2D(int seed=0, int octaves=1, double lacunarity=2.0, double persistance=0.5, double x, double y);
-double getNoise3D(int seed=0, int octaves=1, double lacunarity=2.0, double persistance=0.5, double x, double y, double z);
+## Build System ##
 
-// get the values of a specific length/area/space
-std::vector<double> getNoises1D(int seed=0, int octaves=1, double lacunarity=2.0, double persistance=0.5, double x);
-std::vector<std::vector<double>> getNoises2D(int seed=0, int octaves=1, double lacunarity=2.0, double persistance=0.5, double x, double y);
-std::vector<std::vector<std::vector<double>>> getNoises3D(int seed=0, int octaves=1, double lacunarity=2.0, double persistance=0.5, double x, double y, double z);
-```
+This system is built by `makefile`.
 
-```py
-# Python API
-# get the value of a specific coordinate
-def getNoise1D(seed=0, octaves=1, lacunarity=2.0, persistance=0.5, x);
-def getNoise2D(seed=0, octaves=1, lacunarity=2.0, persistance=0.5, x, y);
-def getNoise3D(seed=0, octaves=1, lacunarity=2.0, persistance=0.5, x, y, z);
-
-# get the values of a specific length/area/space
-def getNoises1D(seed=0, octaves=1, lacunarity=2.0, persistance=0.5, x);
-def getNoises2D(seed=0, octaves=1, lacunarity=2.0, persistance=0.5, x, y);
-def getNoises3D(seed=0, octaves=1, lacunarity=2.0, persistance=0.5, x, y, z); 
-``` -->
+Makefile targets :
+<table>
+    <tr>
+        <th>Target</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>(all)</td>
+        <td>compile a <code>noise.so</code> in <code>noise/</code> folder.</td>
+    </tr>
+    <tr>
+        <td>test</td>
+        <td>use <code>pytest</code> to test python API.</td>
+    </tr>
+    <tr>
+        <td>graph1</td>
+        <td>display 1D noise testing graph.</td>
+    </tr>
+    <tr>
+        <td>graph2</td>
+        <td>display 2D noise testing graph.</td>
+    </tr>
+    <tr>
+        <td>graph3</td>
+        <td>display 3D noise testing graph and generate a <code>noise3d.gif</code> file in <code>test/</code> folder.</td>
+    </tr>
+    <tr>
+        <td>render</td>
+        <td>Take parameters in <code>render.conf</code>, generate <code>heightmap.png</code> and <code>colormap.png</code>, and render terrain by <code>Ursina</code>.</td>
+    </tr>
+    <tr>
+        <td>clean</td>
+        <td>remove all generated files (*.so, __pycache__/, etc).</td>
+    </tr>
+</table>
 
 ## Engineering Infrastructure ##
 
@@ -108,30 +156,34 @@ def getNoises3D(seed=0, octaves=1, lacunarity=2.0, persistance=0.5, x, y, z);
 - Testing framework : `pytest`
 - Documentation : `README.md` in the github repository 
 
-## Schedule ##
+## Gallery ##
 
-- Week 1 (4/10)
-    - Study the algorithm and related knowledge.
-- Week 2 (4/17)
-    - Implement the 1D perlin noise algorithm.
-- Week 3 (4/24)
-    - Implement the 2D perlin noise algorithm.
-- Week 4 (5/01)
-    - Implement the 3D perlin noise algorithm (if time is enough).
-    - Code refactoring.
-- Week 5 (5/08)
-    - Setup python rendering environment.
-    - Try to render the terrain.
-- Week 6 (5/15)
-    - Add details to the terrain.
-        - Color
-        - Textures
-        - Falloff map
-- Week 7 (5/22)
-    - Write test.
-    - Code refactoring.
-- Week 8 (5/29)
-    - Write document & prepare for presentation. 
+<p align="center">
+    1D Noise<br>
+    <img src="img/graph1d.png">
+</p>
+<p align="center">
+    2D Noise<br>
+    <img src="img/graph2d.png" >
+</p>
+<p align="center">
+    3D Noise<br>
+    <img src="img/noise3d.gif" width="50%">
+</p>
+
+<table>
+    <tr>
+        <th colspan="2">Rendered Terrain</th>
+    </tr>
+    <tr>
+        <td><img src="img/render1.png"></td>
+        <td><img src="img/render2.png"></td>
+    </tr>
+    <tr>
+        <td><img src="img/render3.png"></td>
+        <td><img src="img/render4.png"></td>
+    </tr>
+</table>
 
 ## References ##
 
