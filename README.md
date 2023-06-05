@@ -40,6 +40,15 @@ Anyone who wants to simulate random terrain or uses Perlin Noise for application
 
 ## API Description ##
 
+API functions :
+
+- Create class object
+- Create class object with detail options (scale, octaves, lacunarity, persistance)
+- Get noise value at specific position
+- Get noise value list
+- Get single parameter value (seed, xsz, ysz, zsz, scale, octaves, lacunarity, persistance)
+
+
 The API will have both `C++` and `Python` version.
 
 For `Python` users :
@@ -98,15 +107,15 @@ n(std::size_t idx1, std::size_t idx2);                      // 2D
 n(std::size_t idx1, std::size_t idx2, std::size_t idx3);    // 3D
 
 // get other attributes
-std::size_t seed();
-std::size_t xsz();
-std::size_t ysz();          // (only for 2D & 3D)
-std::size_t zsz();          // (only for 3D)
-std::size_t scale();
-std::size_t octaves();
-double lacunarity();
-double persistance();
-std::vector<double> data(); // get noise list
+std::size_t n.seed();
+std::size_t n.xsz();
+std::size_t n.ysz();          // (only for 2D & 3D)
+std::size_t n.zsz();          // (only for 3D)
+std::size_t n.scale();
+std::size_t n.octaves();
+double n.lacunarity();
+double n.persistance();
+std::vector<double> n.data(); // get noise list
 ```
 
 ## Build System ##
@@ -141,13 +150,15 @@ Makefile targets :
     </tr>
     <tr>
         <td>render</td>
-        <td>Take parameters in <code>render.conf</code>, generate <code>heightmap.png</code> and <code>colormap.png</code>, and render terrain by <code>Ursina</code>.</td>
+        <td>take parameters in <code>render.conf</code>, generate <code>heightmap.png</code> and <code>colormap.png</code>, and render terrain by <code>Ursina</code>.</td>
     </tr>
     <tr>
         <td>clean</td>
         <td>remove all generated files (*.so, __pycache__/, etc).</td>
     </tr>
 </table>
+
+- Before rendering terrain, remember to put the parameters in `render.conf`.
 
 ## Engineering Infrastructure ##
 
@@ -193,3 +204,4 @@ Makefile targets :
 - [Procedural Terrain Generation (YouTube)](https://www.youtube.com/playlist?list=PLFt_AvWsXl0eBW2EiBtl_sxmDtSgZBxB3)
 - [Understanding Perlin Noise (article)](https://adrianb.io/2014/08/09/perlinnoise.html)
 - [Improving Noise by Ken Perlin](https://mrl.cs.nyu.edu/~perlin/paper445.pdf)
+- [Texture Images](https://github.com/SebLague/Procedural-Landmass-Textures)
